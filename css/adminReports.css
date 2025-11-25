@@ -1,0 +1,250 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Poppins", Arial, sans-serif;
+    background-color: #f3efef;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .menuBar {
+    width: 20%;
+    padding: 3%;
+    align-self: flex-start;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 10px;
+    height: fit-content;
+  }
+  
+  .menuBar h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5%;
+    color: #2c3e50;
+  }
+  
+  .menuBar .myProfile {
+    background-color: #c5c7c9;
+    border: 0.1rem #000;
+  }
+  
+  .menuBar button {
+    background: transparent;
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.5em 1.5em;
+    border-radius: 6rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  
+  .menuBar button:hover {
+    background-color: #c5c7c9;
+    border: 0.1rem #000;
+    transform: translateX(5px);
+  }
+  
+  .menuBar a {
+    text-decoration: none;
+  }
+  
+  .container {
+    width: 75%;
+    max-width: 1100px;
+    border: 2px solid #000;
+    border-radius: 1rem;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container h2 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    color: #2c3e50;
+    border-bottom: 3px solid #8ff3b7;
+    padding-bottom: 10px;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid #000;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .stat-card.total-reservations {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+  
+  .stat-card.active-users {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .stat-card.pending-requests {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  
+  .stat-card.total-resources {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+  
+  .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+  
+  .stat-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .report-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    border: 2px solid #000;
+  }
+  
+  .report-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-left: 4px solid #8ff3b7;
+    padding-left: 15px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 2px solid #000;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+  }
+  
+  thead {
+    background: linear-gradient(135deg, #8ff3b7 0%, #7dd3c0 100%);
+  }
+  
+  th {
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    color: #2c3e50;
+    border-bottom: 2px solid #000;
+    border-right: 1px solid #ddd;
+  }
+  
+  th:last-child {
+    border-right: none;
+  }
+  
+  td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    color: #333;
+  }
+  
+  td:last-child {
+    border-right: none;
+  }
+  
+  tbody tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  tbody tr:hover {
+    background-color: #f0f8ff;
+  }
+  
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  
+  .badge.reserved {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #155724;
+  }
+  
+  .badge.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #721c24;
+  }
+  
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column;
+    }
+    
+    .menuBar {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .container {
+      width: 100%;
+    }
+    
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }

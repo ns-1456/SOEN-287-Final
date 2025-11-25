@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserve</title>
+  <link rel="stylesheet" href="../css/reserve.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="menuBar">
+    <h1>My Account</h1>
+    <a href="myProfile.html"><button>My Profile</button></a>
+    <a href="myReservations.html"><button>My Reservations</button></a>
+    <a href="browseResources.html"><button>Browse Resources</button></a>
+    <a href="reserve.html"><button class="active">Reserve</button></a>
+    <a href="signOut.html"><button>Sign out</button></a>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <h2>Reserve</h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <a href="#" class="tab active" data-type="rooms">Rooms</a>
+      <a href="#" class="tab" data-type="labs">Labs</a>
+      <a href="#" class="tab" data-type="equipment">Equipment</a>
+    </div>
+
+    <!-- Week navigation -->
+    <div class="week-nav">
+      <button class="week-btn" id="prevWeek">← Previous</button>
+      <span id="weekRange"></span>
+      <button class="week-btn" id="nextWeek">Next →</button>
+    </div>
+
+    <!-- Schedule table -->
+    <table id="scheduleTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <!-- Days added dynamically -->
+        </tr>
+      </thead>
+      <tbody id="timeSlots"></tbody>
+    </table>
+
+    <!-- Confirm button -->
+    <div class="confirmContainer">
+      <button class="confirmButton" onclick="confirmReservation()">Confirm Reservation</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const scheduleTable = document.getElementById("scheduleTable");
+    const weekRange = document.getElementById("weekRange");
+    const timeSlots = document.getElementById("timeSlots");
+    const tabs = document.querySelectorAll(".tab");
+
+    // Time slots
+    const times = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+
+    // Current week Monday
+    let currentMonday = getMonday(new Date());
+    
+    // Current resource type
+    let currentResourceType = "rooms";
+
+    // Get Monday of a week
+    function getMonday(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(d.setDate(diff));
+    }
+
+    // Checking if a slot is reserved 
+    function isSlotReserved(dayIndex, time) {
+      if (currentResourceType === "rooms") {
+        
+        return dayIndex === 1 && (time === "11:00" || time === "12:00" || time === "13:00");
+      } else if (currentResourceType === "equipment") {
+       
+        return dayIndex === 2 && (time === "14:00" || time === "15:00");
+      } else if (currentResourceType === "labs") {
+       
+        return false;
+      }
+      return false;
+    }
+
+    // Checking if a slot is blocked (red - unavailable)
+    function isSlotBlocked(dayIndex, time) {
+      if (currentResourceType === "rooms") {
+        
+        return (dayIndex === 0 && (time === "9:00" || time === "10:00")) ||
+               (dayIndex === 3 && (time === "16:00" || time === "17:00")) ||
+               (dayIndex === 4 && (time === "18:00" || time === "19:00"));
+      } else if (currentResourceType === "equipment") {
+        
+        return (dayIndex === 0 && (time === "12:00" || time === "13:00")) ||
+               (dayIndex === 3 && (time === "9:00" || time === "10:00")) ||
+               (dayIndex === 5 && (time === "15:00" || time === "16:00" || time === "17:00"));
+      } else if (currentResourceType === "labs") {
+      
+        return (dayIndex === 1 && (time === "9:00" || time === "10:00" || time === "11:00")) ||
+               (dayIndex === 4 && (time === "14:00" || time === "15:00")) ||
+               (dayIndex === 6 && (time === "18:00" || time === "19:00"));
+      }
+      return false;
+    }
+
+    // Get reserved slot label
+    function getReservedLabel(dayIndex, time) {
+      if (currentResourceType === "rooms" && dayIndex === 1 && (time === "11:00" || time === "12:00" || time === "13:00")) {
+        return "Reserved";
+      } else if (currentResourceType === "equipment" && dayIndex === 2 && (time === "14:00" || time === "15:00")) {
+        return "Electronic Kit";
+      }
+      return "Reserved";
+    }
+
+    // Rendering schedule for the week
+    function renderWeek(startDate) {
+      const headerRow = scheduleTable.querySelector("thead tr");
+      headerRow.innerHTML = "<th>Time</th>";
+
+      const weekDates = [];
+
+      // Adding days to header
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + i);
+        weekDates.push(d);
+
+        const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = d.getDate();
+        const month = d.toLocaleDateString("en-US", { month: "short" });
+
+        const th = document.createElement("th");
+        th.textContent = `${dayName} ${dayNum} ${month}`;
+        headerRow.appendChild(th);
+      }
+
+      // Updating week range
+      const startFormatted = weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      const endFormatted = weekDates[6].toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      weekRange.textContent = `${startFormatted} - ${endFormatted}`;
+
+      // Adding time slot rows
+      timeSlots.innerHTML = "";
+      times.forEach(time => {
+        const row = document.createElement("tr");
+        const timeCell = document.createElement("td");
+        timeCell.textContent = time;
+        row.appendChild(timeCell);
+
+        for (let i = 0; i < 7; i++) {
+          const td = document.createElement("td");
+          
+          // Checking if this slot is reserved (green)
+          if (isSlotReserved(i, time)) {
+            td.classList.add("reserved");
+            td.textContent = getReservedLabel(i, time);
+          }
+          // Checking if this slot is blocked (red)
+          else if (isSlotBlocked(i, time)) {
+            td.classList.add("booked");
+            td.textContent = "Unavailable";
+          }
+          // Available slot (white)
+          else {
+            td.classList.add("available");
+            
+            // Toggle selection only for available slots
+            td.addEventListener("click", () => {
+              td.classList.toggle("selected");
+            });
+          }
+
+          row.appendChild(td);
+        }
+
+        timeSlots.appendChild(row);
+      });
+    }
+
+    // Tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener("click", (e) => {
+        e.preventDefault();
+        
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove("active"));
+        
+        // Add active class to clicked tab
+        tab.classList.add("active");
+        
+        // Update current resource type
+        currentResourceType = tab.getAttribute("data-type");
+        
+        // Re-render the calendar
+        renderWeek(currentMonday);
+      });
+    });
+
+    // Previous week button
+    document.getElementById("prevWeek").addEventListener("click", () => {
+      currentMonday.setDate(currentMonday.getDate() - 7);
+      renderWeek(currentMonday);
+    });
+
+    // Next week button
+    document.getElementById("nextWeek").addEventListener("click", () => {
+      currentMonday.setDate(currentMonday.getDate() + 7);
+      renderWeek(currentMonday);
+    });
+
+    // Checking if there's a type parameter in the URL BEFORE initial render
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    
+    console.log("URL:", window.location.href);
+    console.log("Type parameter:", typeParam);
+    console.log("Current resource type before:", currentResourceType);
+    
+    if (typeParam && (typeParam === 'rooms' || typeParam === 'labs' || typeParam === 'equipment')) {
+      
+      currentResourceType = typeParam;
+      console.log("Current resource type after:", currentResourceType);
+      
+      // Updating active tab
+      tabs.forEach(tab => {
+        tab.classList.remove("active");
+        if (tab.getAttribute("data-type") === typeParam) {
+          tab.classList.add("active");
+          console.log("Activated tab:", typeParam);
+        }
+      });
+    }
+
+    renderWeek(currentMonday);
+
+    // Confirming reservation
+    function confirmReservation() {
+      const selectedSlots = document.querySelectorAll(".selected");
+      if (selectedSlots.length === 0) {
+        alert("Please select at least one time slot.");
+        return;
+      }
+      alert(`You have confirmed ${selectedSlots.length} reservation(s) for ${currentResourceType}!`);
+    }
+  </script>
+</body>
+</html>
